@@ -16,3 +16,30 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
+      - name: instal npm dependencies
+        run: npm i -g snyk-delta
+      - name: snyk test
+        continue-on-error: true # To make sure that SARIF upload gets called
+        run: snyk test --json --print-deps | snyk-delta
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Third test
+        continue-on-error: true # To make sure that SARIF upload gets called
+        run: snyk code test --sarif > snyk_sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk_sarif
+      - name: One more test
+        run: docker build . --file Dockerfile --tag my-vuln-image:latest
+      - name: Snyk Docker
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: my-vuln-image:latest
+          command: monitor
+        
+        
