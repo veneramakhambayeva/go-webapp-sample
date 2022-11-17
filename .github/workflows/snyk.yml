@@ -16,15 +16,21 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif
+      - name: install node js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.1
       - name: instal npm dependencies
         run: npm i -g snyk-delta
-      - name: snyk test
-        continue-on-error: true # To make sure that SARIF upload gets called
+      - name: Second test
+        continue-on-error: true 
         run: snyk test --json --print-deps | snyk-delta
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Third test
-        continue-on-error: true # To make sure that SARIF upload gets called
+        continue-on-error: true 
+      - uses: snyk/actions/setup@master
+      - name: run snyk test code
         run: snyk code test --sarif > snyk_sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
