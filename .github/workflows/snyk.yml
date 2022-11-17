@@ -29,7 +29,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Third test
         continue-on-error: true 
-      - uses: snyk/actions/setup@master
+        uses: snyk/actions/setup@master
       - name: run snyk test code
         run: snyk code test --sarif > snyk_sarif
         env:
