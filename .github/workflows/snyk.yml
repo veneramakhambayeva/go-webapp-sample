@@ -22,6 +22,9 @@ jobs:
           node-version: 12.1
       - name: instal npm dependencies
         run: npm i -g snyk-delta
+      - name: Install Snyk
+        continue-on-error: true 
+        uses: snyk/actions/setup@master
       - name: Second test
         continue-on-error: true 
         run: snyk test --json --print-deps | snyk-delta
